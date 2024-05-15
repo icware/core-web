@@ -1,25 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import AuthRoutes from '@/packages/Auth/routes/routes'
 import HomeView from '../views/HomeView.vue'
+import  useModelAuth  from '@/models/Auth';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: {
+      unprotected:true,
+      title:'Tela inicial'
   },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+  },
+...AuthRoutes,
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+router.beforeEach(async (to, from, next) => {
+  document.title = to.meta.title;
+
+  const auth = useModelAuth();
+
+  if (!to.meta.unprotected) {
+    auth.getIsAuth ? next() : next('/login');
+  } else {
+    next();
+  }
+} );
+
 
 export default router
