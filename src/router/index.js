@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import AuthRoutes from '@/packages/Auth/routes/routes'
+import { createRouter, createWebHistory } from 'vue-router';
+import AuthRoutes from '@/packages/Auth/routes/routes';
+import DashRouters from '@/packages/Dashboard/routes/routes';
 import  useModelAuth  from '@/models/Auth';
 
 const routes = [
@@ -17,12 +18,13 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: () =>
-      import(/* webpackChunkName: "dashboard" */ "../views/DashboardView.vue"),
+      import(/* webpackChunkName: "dashboard" */ "../packages/Dashboard/views/DashboardView.vue"),
     meta: {
       title:'Dashboard'
   },
   },
 ...AuthRoutes,
+...DashRouters,
 ]
 
 const router = createRouter({
