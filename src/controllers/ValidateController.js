@@ -22,3 +22,21 @@ export function validEmail(value) {
     }
     return true;
 }
+
+export function validatePassword(password) {
+    if (!password || typeof password !== 'string') {
+        throw new Error('A senha fornecida é inválida.');
+    }
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    if (!(hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && isLongEnough)) {
+        throw new Error('A senha não atende aos critérios mínimos de segurança.');
+    }
+
+    return true;
+}
