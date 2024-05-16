@@ -1,16 +1,23 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { setStorage, setJsonStorage, delStorage } from "@/services/Storage";
+import { setStorage, setJsonStorage, delStorage, getStorage, getJsonStorage } from "@/services/Storage";
 import { AuthCheck } from "@/controllers/AuthController";
+
 
 const useAuthModel = defineStore('auth', () => {
     const token = ref('');
     const user = ref('');
     const isAuth = ref(false);
 
+    function setData(data){
+      setToken(data.token);
+      setUser(data.user);
+      setIsAuth(true);
+    }
+
     function setToken(value) {
         if (value) {
-          token.value = setStorage("access_token", value);
+          token.value = setStorage("token", value);          
         } else {
           console.log("Token não foi salvo");
         }
@@ -18,27 +25,36 @@ const useAuthModel = defineStore('auth', () => {
     
       function setUser(value) {
         if (value) {
-          user.value = setJsonStorage("access_user", value);
+          user.value = setJsonStorage("user", value);
         } else {
           console.log("Usuário não foi salvo");
         }
       }
    
-      function setIsAuth(value) {
+      function setIsAuth(value) {        
         if (value) {
           isAuth.value = value;
         } else {
-          isAuth.value = false;
+          isAuth.value = false;          
         }
       }
 
       async function checkToken() {
-        return  await  AuthCheck();
+        try {
+           const  isValid = await AuthCheck();
+           if (!isValid) {
+              authLogout();
+           }
+        } catch (error) {
+          console.log(error.message);
+          throw new Error(error)
+        }
+        
       }
 
       function authLogout() {
-        delStorage('access_token');
-        delStorage('access_user');
+        delStorage('token');
+        delStorage('user');
         token.value = null;
         user.value = null;
         isAuth.value = false;
@@ -47,11 +63,12 @@ const useAuthModel = defineStore('auth', () => {
 
 
       const getUser = computed(() => {
-        return user.value;
+        const data = getJsonStorage('user');
+        return data.user;
       });
     
       const getToken = computed(() => {
-        return token.value;
+        return getStorage('token');
       });
     
     
@@ -62,6 +79,7 @@ const useAuthModel = defineStore('auth', () => {
       );
 
       return {
+        setData,
         setToken,
         setUser,  
         setIsAuth,

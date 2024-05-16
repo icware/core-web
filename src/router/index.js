@@ -13,6 +13,15 @@ const routes = [
       title:'Tela inicial'
   },
   },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () =>
+      import(/* webpackChunkName: "dashboard" */ "../views/DashboardView.vue"),
+    meta: {
+      title:'Dashboard'
+  },
+  },
 ...AuthRoutes,
 ]
 

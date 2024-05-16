@@ -10,17 +10,17 @@ const app = createApp(App);
 app.use(createPinia())
 app.use(router)
 
-if (localStorage.getItem('access_token')) {
+if (localStorage.getItem('token')) {
     (async () => {
         const auth = useModelAuth();
 
-        try {
+        try {            
             auth.setIsAuth(true);
-
-           await auth.checkToken();
-
+            await auth.checkToken();
         } catch (error) {
             auth.setIsAuth(false);
+            console.log(error);
+            auth.authLogout();
         }
 
     } ) ()

@@ -1,42 +1,36 @@
-import requestsInstance from "@/services/Requests";
+import {ServerRequest} from "@/services/Requests";
+import AppSettings from "@/config";
 
-export async function AuthLogin ( email, password ) {
-    if (!email || !password) {
-        return null
-    }
-
-    const dataRequest = {
-        email:email,
-        password:password
-    }
-
+export async function AuthLogin(email, password) {
     try {
-        const response = await requestsInstance.post(
-            'auth/token',
-            dataRequest
-        );
-
-        if (response) {
-            return response
+        if (!email || !password) {
+            throw new Error('Email e senha são obrigatórios.');
         }
 
-    } catch (error) {
-        return null;
-    }
+        const dataRequest = {
+            email: btoa(email),
+            password: btoa(password)
+        };
 
+        const response = await ServerRequest('post', AppSettings.server.authToken, dataRequest);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(error.response.data.error);
+        } else if (error.request) {  
+            throw new Error('Não foi possível obter resposta do servidor.');
+        } else {
+            throw new Error(error.message);
+        }
+    }
 }
 
 export async function AuthRegister ( dataRequest ) {
     if (!dataRequest) {
-        console.log('Esta faltando os dados');
         return null;
     }
-
     try {
-        const response = await requestsInstance.post(
-            'auth',
-            dataRequest
-        );
+        const response = await ServerRequest('post', AppSettings.server.authRegister, dataRequest);
 
         if (response) {
             return response
@@ -51,14 +45,10 @@ export async function AuthRegister ( dataRequest ) {
 export async function AuthCheck () {
 
     try {
-        const response = await requestsInstance.get('auth/token',);
-
-        if (response) {
-            return response
-        }
-
-    } catch (error) {
-        return null;
+       await ServerRequest('get', AppSettings.server.authToken);
+       return true;
+    } catch (error) {        
+        return false;
     }
 
 }

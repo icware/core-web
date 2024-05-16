@@ -44,12 +44,12 @@
 <script setup>
 import useAuthModel from '@/models/Auth';
 import { onMounted, reactive, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { AuthLogin } from '@/controllers/AuthController';
 import { validField, validEmail } from '@/controllers/ValidateController';
 
 // Ueses
-const router = useRoute();
+const router = useRouter();
 const auth = useAuthModel();
 
 // Inputs
@@ -63,7 +63,7 @@ const MessageError = ref('');
 
 // Datas
 const data = reactive({
-    email: ref(''),
+    email: ref('ideilson.raise@gmail.com'),
     password: ref(''),
 });
 
@@ -97,25 +97,14 @@ async function submitForm() {
     if (!isValid) {
         return;
     }
+
     try {
-
         const response = await AuthLogin(data.email, data.password);
-
-        if (response.status === 200) {
-            auth.setData(response.data);
-            router.push('/dashboard');
-        } else {
-            if (response.data) {
-                MessageError.value = response.data.error.message;
-            } else {
-                MessageError.value = 'Falha ao tentar fazer login';
-            }
-        }
+        auth.setData(response);
+        router.push("/dashboard");
     } catch (error) {
-        MessageError.value = 'Falha ao tentar fazer login';
+        MessageError.value = error.message;
     }
-
-
 }
 
 onMounted(() => {
