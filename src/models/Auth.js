@@ -5,19 +5,21 @@ import { AuthCheck } from "@/controllers/AuthController";
 
 
 const useAuthModel = defineStore('auth', () => {
-    const token = ref('');
-    const user = ref('');
+    const token = ref(getStorage('token'));  
+    const user = ref(getJsonStorage('user'));
     const isAuth = ref(false);
 
-    function setData(data){
-      setToken(data.token);
-      setUser(data.user);
+    function setData(response){
+      authLogout();
+      setToken(response.token);
+      setUser(response.data.user);
       setIsAuth(true);
     }
 
     function setToken(value) {
         if (value) {
-          token.value = setStorage("token", value);          
+         setStorage("token", value);    
+         token.value = value;
         } else {
           console.log("Token não foi salvo");
         }
@@ -25,7 +27,8 @@ const useAuthModel = defineStore('auth', () => {
     
       function setUser(value) {
         if (value) {
-          user.value = setJsonStorage("user", value);
+          setJsonStorage("user", value);
+          user.value = value;
         } else {
           console.log("Usuário não foi salvo");
         }
@@ -62,13 +65,12 @@ const useAuthModel = defineStore('auth', () => {
       }
 
 
-      const getUser = computed(() => {
-        const data = getJsonStorage('user');
-        return data.user;
+      const getUser = computed(() => {        
+        return user.value;
       });
     
       const getToken = computed(() => {
-        return getStorage('token');
+        return token.value;
       });
     
     

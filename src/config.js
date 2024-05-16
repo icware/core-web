@@ -5,10 +5,10 @@ const defaultHeaders = {
 };
 
 const apiServer ={
-    address: 'http://api.pathsdk.com.br',
+    address: 'https://api.pathsdk.com.br',
     baseUrl:'',
     authToken:'/auth/token',
-    authRegister:'/auth/register',
+    authRegister:'/auth',
 }
 
 const AppSettings = {

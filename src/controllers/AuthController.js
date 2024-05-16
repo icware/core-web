@@ -1,5 +1,6 @@
 import {ServerRequest} from "@/services/Requests";
 import AppSettings from "@/config";
+import useAuthModel from "@/models/Auth";
 
 export async function AuthLogin(email, password) {
     try {
@@ -26,6 +27,7 @@ export async function AuthLogin(email, password) {
 }
 
 export async function AuthRegister ( dataRequest ) {
+   
     if (!dataRequest) {
         return null;
     }
@@ -43,10 +45,12 @@ export async function AuthRegister ( dataRequest ) {
 }
 
 export async function AuthCheck () {
-
+    const auth = useAuthModel()
     try {
-       await ServerRequest('get', AppSettings.server.authToken);
-       return true;
+      const response = await ServerRequest('get', AppSettings.server.authToken);
+      console.log(response);
+        auth.setUser(response.data);
+      return true;
     } catch (error) {        
         return false;
     }
