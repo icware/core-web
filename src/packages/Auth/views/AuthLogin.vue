@@ -1,4 +1,35 @@
 <template>
+
+    <div class="card">
+        <div class="flex flex-column md:flex-row">
+            <div class="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
+                <div class="flex flex-wrap justify-content-center align-items-center gap-2">
+                    <CFloatLabel>
+                        <CInputText id="email" v-model="data.email" class="w-12rem" />
+                        <label for="email" class="w-6rem">Username</label>
+                    </CFloatLabel>
+                </div>
+                <div class="flex flex-wrap justify-content-center align-items-center gap-2">
+                    <CFloatLabel>
+                        <CPassword id="password" v-model="data.password" toggleMask class="w-12rem" />
+                        <label for="password" class="w-6rem">Password</label>
+                    </CFloatLabel>
+
+                </div>
+                <CButton label="Login" icon="pi pi-user" class="w-10rem mx-auto" />
+            </div>
+            <div class="w-full md:w-2">
+                <CDivider layout="vertical" class="hidden md:flex"><b>OR</b></CDivider>
+                <CDivider layout="horizontal" class="flex md:hidden" align="center"><b>OR</b></CDivider>
+            </div>
+            <div class="w-full md:w-5 flex align-items-center justify-content-center py-5">
+                <CButton label="Sign Up" icon="pi pi-user-plus" severity="success" class="w-10rem"></CButton>
+            </div>
+        </div>
+    </div>
+
+
+
     <div>
         <h1>Login</h1>
         <form @submit.prevent="submitForm">
@@ -7,8 +38,12 @@
 
 
                 <div>
-                    <label for=email>Email</label>
-                    <input type="email" v-model="data.email" name="email" id="email" ref="emailInput" />
+
+
+
+
+                    <!-- <label for=email>Email</label>
+                    <input type="email" v-model="data.email" name="email" id="email" ref="emailInput" /> -->
                     <div v-if="emailError" style="color: red;">
                         {{ emailError }}
                     </div>
@@ -47,6 +82,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AuthLogin } from '@/controllers/AuthController';
 import { validField, validEmail } from '@/controllers/ValidateController';
+
 
 // Ueses
 const router = useRouter();
