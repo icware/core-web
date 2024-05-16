@@ -6,24 +6,25 @@ const AuthRoutes = [
     name: "authLogin",
 
     meta: {
-        unprotected:true,
-        title:'Login'
+      unprotected: true,
+      title: "Login",
     },
     component: () =>
       import(/* webpackChunkName: "autLogin" */ "../views/AuthLogin.vue"),
   },
 
   {
-    path: "/test",
-    name: "test",
+    path: "/register",
+    name: "authRegister",
 
     meta: {
-        title:'Rota de teste'
+      unprotected: true,
+      title: "Cadastro",
     },
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AuthLogin.vue"),
-  },
 
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AuthRegister.vue"),
+  },
 ];
 
 // const AuthRoutes = Routers.map(route => ({
