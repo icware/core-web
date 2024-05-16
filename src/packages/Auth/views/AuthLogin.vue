@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h1>Login</h1>
         <form @submit.prevent="submitForm">
 
             <div>
@@ -7,8 +8,7 @@
 
                 <div>
                     <label for=email>Email</label>
-                    <input type="email" v-model="data.email" name="email" id="email" ref="emailInput"
-                        @input="clearEmailError" />
+                    <input type="email" v-model="data.email" name="email" id="email" ref="emailInput" />
                     <div v-if="emailError" style="color: red;">
                         {{ emailError }}
                     </div>
@@ -16,8 +16,7 @@
 
                 <div>
                     <label for=password>Senha</label>
-                    <input type="password" v-model="data.password" name="password" id="password" ref="passwordInput"
-                        @input="clearPasswordError" />
+                    <input type="password" v-model="data.password" name="password" id="password" ref="passwordInput" />
                     <div v-if="passwordError" style="color: red;">
                         {{ passwordError }}
                     </div>
@@ -47,6 +46,7 @@ import useAuthModel from '@/models/Auth';
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { AuthLogin } from '@/controllers/AuthController';
+import { validField, validEmail } from '@/controllers/ValidateController';
 
 // Ueses
 const router = useRoute();
@@ -68,59 +68,54 @@ const data = reactive({
 });
 
 
-function clearEmailError() {
-    MessageError.value = '';
-    emailError.value = '';
-}
-
-function clearPasswordError() {
-    MessageError.value = '';
-    passwordError.value = '';
-}
-
-
 function dataValidate(data) {
+    let isValid = true;
 
-    if (!data.email) {
-        emailError.value = 'Email é obrigatorio';
+    try {
+        isValid = validEmail(data.email);
+    } catch (error) {
         emailInput.value.focus();
-        return false;
-    } else {
-        emailError.value = '';
-    }
-    if (!data.password) {
-        passwordError.value = 'Senha não informada'
-        passwordInput.value.focus();
-        return false;
-    } else {
-        passwordError.value = '';
+        emailError.value = error.message;
+        isValid = false;
     }
 
-    return true;
+    try {
+        isValid = validField(data.password);
+    } catch (error) {
+        passwordError.value = error.message;
+        passwordInput.value.focus();
+        isValid = false;
+    }
+
+    return isValid;
+
 }
 
 async function submitForm() {
+    const isValid = dataValidate(data);
+
+    if (!isValid) {
+        return;
+    }
     try {
 
-        if (dataValidate(data)) {
+        const response = await AuthLogin(data.email, data.password);
 
-            const response = await AuthLogin(data.email, data.password);
-
-            if (response.status === 200) {
-                auth.setData(response.data);
-                router.push('/dashboard');
+        if (response.status === 200) {
+            auth.setData(response.data);
+            router.push('/dashboard');
+        } else {
+            if (response.data) {
+                MessageError.value = response.data.error.message;
             } else {
-                if (response.data) {
-                    MessageError.value = response.data.error;
-                } else {
-                    MessageError.value = 'Falha ao tentar fazer login';
-                }
+                MessageError.value = 'Falha ao tentar fazer login';
             }
         }
-
     } catch (error) {
         MessageError.value = 'Falha ao tentar fazer login';
     }
+
+
 }
 
 onMounted(() => {

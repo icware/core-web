@@ -3,24 +3,28 @@
 export function validField (value) {
     if (!value) {
         throw new Error('Campo obrigatório!');
+    } else {
+        return true;
     }
-    return true;
 }
 
 export function compareField(first, last) {
-    if (first != last) {
-        throw new Error('Os campos não confere');
+    if (!first || !last) {
+        throw new Error('Os campos não podem estar vazios.');
     }
+
+    if (first !== last) {
+        throw new Error('Os campos não conferem.');
+    }
+    
     return true;
 }
 
 export function validEmail(value) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailPattern.test(value)) {
-        throw new Error('não é um endereço de e-mail válido.');
+    if (!value) {
+        throw new Error('Campo obrigatório!');
     }
-    return true;
+    return true
 }
 
 export function validatePassword(password) {

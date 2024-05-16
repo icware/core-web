@@ -23,7 +23,7 @@ const AuthRoutes = [
     },
 
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AuthRegister.vue"),
+      import(/* webpackChunkName: "autRegister" */ "../views/AuthRegister.vue"),
   },
 ];
 

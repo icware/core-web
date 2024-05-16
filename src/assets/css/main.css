@@ -86,7 +86,7 @@ table tr.selected {
   color: rgba(78, 205, 255, 0.883);
 }
 
-input[type="checkbox"],
+/* input[type="checkbox"],
 input[type="radio"] {
   color: rgb(216, 216, 201);
 }
@@ -102,6 +102,83 @@ input[type="checkbox"]:checked::before,
 input[type="radio"]:checked::before {
   background-color: rgba(0, 100, 139, 0.883);
   border-color: rgba(0, 100, 139, 0.883);
+} */
+
+/* Estilos para checkboxes e botões de rádio */
+input[type="checkbox"],
+input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+/* Estilos para os rótulos */
+input[type="checkbox"] + label,
+input[type="radio"] + label {
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  display: inline-block;
+  color: rgb(216, 216, 201);
+}
+
+/* Estilos para a marcação dentro do checkbox e do botão de rádio */
+input[type="checkbox"] + label::before,
+input[type="radio"] + label::before,
+input[type="checkbox"] + label::after,
+input[type="radio"] + label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%; /* Centraliza verticalmente */
+  transform: translateY(-50%);
+}
+
+/* Estilos para a marcação dentro do checkbox */
+input[type="checkbox"] + label::before {
+  width: 16px;
+  height: 16px;
+  background-color: rgb(13, 17, 23);
+  border: 1px solid rgb(216, 216, 201);
+  border-radius: 3px;
+}
+
+/* Estilos para a marcação dentro do botão de rádio */
+input[type="radio"] + label::before {
+  width: 16px;
+  height: 16px;
+  background-color: rgb(13, 17, 23);
+  border: 1px solid rgb(216, 216, 201);
+  border-radius: 50%;
+}
+
+/* Estilos para a marcação dentro do checkbox quando está marcado */
+input[type="checkbox"]:checked + label::before {
+  background-color: rgba(0, 100, 139, 0.883);
+  border-color: rgba(0, 100, 139, 0.883);
+}
+
+/* Estilos para a marcação dentro do checkbox após ser marcado */
+input[type="checkbox"]:checked + label::after {
+  width: 8px;
+  height: 8px;
+  background: white;
+  left: 5px;
+}
+
+/* Estilos para a marcação dentro do botão de rádio quando está marcado */
+input[type="radio"]:checked + label::before {
+  background-color: rgba(0, 100, 139, 0.883);
+  border-color: rgba(0, 100, 139, 0.883);
+}
+
+/* Estilos para a marcação dentro do botão de rádio após ser marcado */
+input[type="radio"]:checked + label::after {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  left: 5px;
 }
 
 nav {

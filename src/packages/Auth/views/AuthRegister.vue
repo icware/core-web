@@ -1,62 +1,57 @@
 <template>
     <div>
-        <div>
-            <h1>Cadastre-se</h1>
-            <form @submit.prevent="submitForm">
-                <div>
-                    <label for="">Nome:</label>
-                    <input v-model="data.first_name" type="text">
+        <h1>Cadastre-se</h1>
+        <form @submit.prevent="submitForm">
+            <div>
+                <label for="first_name">Nome:</label>
+                <input v-model="data.first_name" type="text" id="first_name">
+            </div>
+            <div>
+                <label for="last_name">Sobrenome:</label>
+                <input v-model="data.last_name" type="text" id="last_name">
+            </div>
+            <div>
+                <label for="email">E-mail:</label>
+                <input ref="emailInput" v-model="data.email" type="email" id="email">
+                <div v-if="emailError" style="color: red;">
+                    {{ emailError }}
                 </div>
-                <div>
-                    <label for="">Sobrenome:</label>
-                    <input v-model="data.last_name" type="text">
+            </div>
+            <div>
+                <label for="password">Senha:</label>
+                <input ref="passInput" v-model="data.password" type="password" id="password">
+                <div v-if="passError" style="color: red;">
+                    {{ passError }}
                 </div>
-                <div>
-                    <label for="">E-mail:</label>
-                    <input ref="emailInput" v-model="data.email" type="email" name="email" id="email"
-                        @input="ClearEmailInput" />
-                    <div v-if="emailError" style="color: red;">
-                        {{ emailError }}
-                    </div>
+            </div>
+            <div>
+                <label for="passConfirm">Confirmar Senha:</label>
+                <input ref="passConfirmInput" v-model="passConfirm" type="password" id="passConfirm">
+                <div v-if="passConfirmError" style="color: red;">
+                    {{ passConfirmError }}
                 </div>
-                <div>
-                    <label for="">Senha:</label>
-                    <input ref="passInput" v-model="data.password" type="password" name="password" id="password"
-                        @input="ClearPassInput" />
-                    <div v-if="passError" style="color: red;">
-                        {{ passError }}
-                    </div>
-                </div>
-                <div>
-                    <label for="">Confirmar Senha:</label>
-                    <input ref="passInput" v-model="passConfirm" type="password" name="passConfirm" id="passConfirm"
-                        @input="ClearPassConfirmInput" />
-                    <div v-if="passConfirmError" style="color: red;">
-                        {{ passConfirmError }}
-                    </div>
-                </div>
-                <div>
-                    <label for="">Telefone:</label>
-                    <input v-model="data.phone" type="text">
-                </div>
-                <div>
-                    <button type="submit">Cadastrar</button>
-                    <button>Cancelar</button>
-                </div>
-                <div v-if="MessageError" role="alert">
-                    {{ MessageError }}
-                </div>
-            </form>
-
-        </div>
+            </div>
+            <div>
+                <label for="phone">Telefone:</label>
+                <input v-model="data.phone" type="text" id="phone">
+            </div>
+            <div>
+                <button type="submit">Cadastrar</button>
+                <router-link to="/" class="button">Cancelar</router-link>
+            </div>
+            <div v-if="MessageError" role="alert">
+                {{ MessageError }}
+            </div>
+        </form>
     </div>
 </template>
+
 
 <script setup>
 import { AuthRegister } from '@/controllers/AuthController';
 import { reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
-// import { RegisterValidEmail, RegisterValidPassword, RegisterPassConfirm } from "@/packages/Auth/functions/RegisterValidate.js";
+import { validField, validEmail, compareField } from '@/controllers/ValidateController';
 
 //uses
 const router = useRoute();
@@ -67,14 +62,13 @@ const emailError = ref('');
 const passError = ref('');
 const passConfirmError = ref('');
 
-//inputs
+//refs
 const emailInput = ref(null);
 const passInput = ref(null);
 const passConfirmInput = ref(null);
 
 
-
-//Datas
+//datas
 const passConfirm = ref('');
 const data = reactive({
     first_name: '',
@@ -84,69 +78,66 @@ const data = reactive({
     phone: ''
 });
 
-function ClearEmailInput() {
-    emailError.value = '';
-    MessageError.value = '';
-}
-
-function ClearPassInput() {
-    passError.value = '';
-    MessageError.value = '';
-}
-
-function ClearPassConfirmInput() {
-    passConfirmError.value = '';
-    MessageError.value = '';
-}
-
 function dataValidate(data) {
-    if (!data.email) {
-        emailError.value = 'Campo obrigatório!.';
+    let isValid = true;
+
+    try {
+        isValid = validEmail(data.email);
+    } catch (error) {
         emailInput.value.focus();
-        return false
+        emailError.value = error.message;
+        isValid = false;
     }
-    if (!data.password) {
-        passError.value = 'Campo obrigatório!.';
+    try {
+        isValid = validField(data.password);
+    } catch (error) {
         passInput.value.focus();
-        return false
+        passError.value = error.message;
+        isValid = false;
     }
-    if (!passConfirm.value) {
-        passConfirmError.value = 'Confirme a senha.';
+    try {
+        isValid = validField(passConfirm.value);
+    } catch (error) {
         passConfirmInput.value.focus();
-        return false
+        passConfirmError.value = error.message;
+        isValid = false;
     }
-    if (passConfirm.value != data.password) {
-        passConfirmError.value = 'As senhas não são iguais.';
+    try {
+        isValid = compareField(passConfirm.value, data.password);
+    } catch (error) {
         passConfirmInput.value.focus();
-        return false
+        passConfirmError.value = error.message;
+        isValid = false;
     }
-    console.log(passConfirm.value, data.password);
-    return true
+
+    return isValid;
 }
 
 async function submitForm() {
+    const isValid = dataValidate(data);
+
+    if (!isValid) {
+        return;
+    }
+
     try {
+        const response = await AuthRegister(data);
 
-        if (dataValidate(data)) {
-            const response = await AuthRegister(data);
-
-            if (response.status === 201) {
-                MessageError.value = response.data.sucess;
-                router.push('/dashboard');
+        if (response.status === 201) {
+            MessageError.value = response.data.sucess;
+            router.push('/dashboard');
+        } else {
+            if (response.data) {
+                MessageError.value = response.data.error;
             } else {
-                if (response.data) {
-                    MessageError.value = response.data.error;
-                } else {
-                    MessageError.value = 'Falha ao se cadastrar!';
-                }
+                MessageError.value = 'Falha ao se cadastrar!';
             }
         }
-
     } catch (error) {
         MessageError.value = 'Falha ao se cadastrar!';
     }
-}
 
+}
 
 </script>
 

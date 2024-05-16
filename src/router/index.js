@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AuthRoutes from '@/packages/Auth/routes/routes'
-import HomeView from '../views/HomeView.vue'
 import  useModelAuth  from '@/models/Auth';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
+    component: () =>
+      import(/* webpackChunkName: "home" */ "../views/HomeView.vue"),
     meta: {
       unprotected:true,
       title:'Tela inicial'
