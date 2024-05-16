@@ -56,6 +56,7 @@
 import { AuthRegister } from '@/controllers/AuthController';
 import { reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
+// import { RegisterValidEmail, RegisterValidPassword, RegisterPassConfirm } from "@/packages/Auth/functions/RegisterValidate.js";
 
 //uses
 const router = useRoute();
