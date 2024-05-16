@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const headers = {
-    Accept: 'application/json',
+    'Accept': 'application/json',
     'Content-Type': 'application/json',
 };
 
-const serverURL = 'https://127.0.0.1:8000';
+const serverURL = 'http://127.0.0.1:8000';
 
 const requestsInstance = axios.create({
     baseURL: serverURL,

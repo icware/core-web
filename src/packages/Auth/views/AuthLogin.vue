@@ -2,15 +2,11 @@
     <div>
         <form @submit.prevent="submitForm">
 
-            <div v-if="MessageError" role="alert">
-                {{ MessageError }}
-            </div>
-
             <div>
 
 
                 <div>
-                    <label for=password>Email</label>
+                    <label for=email>Email</label>
                     <input type="email" v-model="data.email" name="email" id="email" autocomplete="email" />
                 </div>
 
@@ -25,6 +21,12 @@
                         Entrar
                     </button>
                 </div>
+
+                <div v-if="MessageError" role="alert">
+                    {{ MessageError }}
+                </div>
+
+
 
             </div>
 
@@ -69,7 +71,7 @@ async function submitForm() {
         }
 
     } catch (error) {
-        MessageError.value = error;
+        MessageError.value = 'Falha ao tentar fazer login';
     }
 }
 
